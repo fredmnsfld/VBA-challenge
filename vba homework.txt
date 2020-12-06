@@ -1,0 +1,102 @@
+' 1. Loop through every worksheet and select the state contents.
+' 2. Copy the state contents and paste it into the Combined_Data tab
+
+Sub Alphabetical_testing_data()
+    
+    ' Add a sheet named "Combined Data"
+    Sheets.Add.Name = "Combined_Data"
+    'move created sheet to be first sheet
+    Sheets("Combined_Data").Move Before:=Sheets(1)
+    ' Specify the location of the combined sheet
+    Set combined_sheet = Worksheets("Combined_Data")
+    
+    'Set variables Stock Ticker Symbol, Yearly Change, and percentage change & keep track i summary table
+    Dim Stock_Ticker_Symbol As String
+    Dim Yearly_Change As Long
+    Yearly_Total = 0
+    Dim Yearly_Percentage_Change As Long
+    Yearly_Percentage_Change = 0
+    Dim Total_Volume As Long
+    Total_Volume = 0
+    ' Keep track of the location for Stock ticker in the summary table
+    Dim Summary_Table_Row As Long
+    Summary_Table_Row = 2
+
+    ' Loop through all sheets
+    For Each ws In Worksheets
+
+        ' Find the last row of the combined sheet after each paste
+        ' Add 1 to get first empty row
+        lastRow = combined_sheet.Cells(Rows.Count, "A").End(xlUp).Row + 1
+
+        ' Find the last row of each worksheet
+        ' Subtract one to return the number of rows without header
+        lastRowState = ws.Cells(Rows.Count, "A").End(xlUp).Row - 1
+
+        ' Copy the contents of each state sheet into the combined sheet
+        combined_sheet.Range("A" & lastRow & ":G" & ((lastRowState - 1) + lastRow)).Value = ws.Range("A2:G" & (lastRowState + 1)).Value
+
+    Next ws
+
+    ' Copy the headers from sheet 1
+    combined_sheet.Range("A1:G1").Value = Sheets(2).Range("A1:G1").Value
+    
+    ' Autofit to display data
+    combined_sheet.Columns("A:G").AutoFit
+    
+    'Add headers to 4 additional columns
+    Range("I1:L1").Value = Array("Stock_Ticker_Symbol", "Yearly_Change", "Percent_Change", "Total_Volume")
+    
+   '''''''''''''''
+   ' Loop through all credit card purchases
+  For i = 2 To 336275
+
+    ' Check if we are still within the same credit card brand, if it is not...
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+
+      ' Set the Stock Ticker Symbol
+      Stock_Ticker_Symbol = Cells(i, 1).Value
+
+      ' Add to the Total Volume
+      Total_Volume = Total_Volume + Cells(i, 7).Value
+
+      ' Print the Stock Ticker Symbol in the Summary Table
+      Range("I" & Summary_Table_Row).Value = Stock_Ticker_Symbol
+      
+      ' Print the Yearly Change in the Summary Table
+      Range("J" & Summary_Table_Row).Value = Yearly_Change
+      
+      ' Print the yearly percent change for price in the Summary Table
+      Range("K" & Summary_Table_Row).Value = Yearly_Percent_Change
+
+      ' Print the Total Volume to the Summary Table
+      Range("L" & Summary_Table_Row).Value = Total_Volume
+
+      ' Add one to the summary table row
+      Summary_Table_Row = Summary_Table_Row + 1
+      
+      ' Reset the Stock Ticker Symbol
+      Stock_Ticker_Symbol = 0
+      ' Reset the Stock Ticker Symbol
+      Yearly_Change = 0
+         ' Reset the Stock Ticker Symbol
+      Yearly_Percentage_Change = 0
+         ' Reset the Stock Ticker Symbol
+      Total_Volume = 0
+
+    ' If the cell immediately following a row is the same Stock...
+    Else
+
+      ' Add to the Yearly Change
+      Brand_Total = Brand_Total + Cells(i, 3).Value
+
+    End If
+
+  Next i
+ 
+        
+   
+End Sub
+
+
+    
